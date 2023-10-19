@@ -67,9 +67,13 @@ char keys[ROWS][COLS] = {
 int modePushCounter = 0;       // counter for the number of button presses
 int buttonState = 0;           // current state of the button
 int lastButtonState = 0;       // previous state of the button
+int stop = 0;
 
 long positionEncoderA  = -999; //encoderA LEFT position variable
 long positionEncoderB  = -999; //encoderB RIGHT position variable
+int duration = 100;
+int cycle = 1;
+int tempcycle = 1;
 
 const int ModeButton = A0;     // the pin that the Modebutton is attached to
 
@@ -93,6 +97,7 @@ void setup()   {
 void loop() {
 char key = keypad.getKey();
 checkModeButton();
+stop = 0;
 
   switch (modePushCounter) {
     case 0:
@@ -102,13 +107,27 @@ checkModeButton();
     lcd_mode_0();
     //Serial.println("mode 0");
     
-    
     if (key) {  //Basic windows shortcuts
       switch (key) {
       case '1': // Open Task Manager
-      Keyboard.press(KEY_LEFT_CTRL);
-      Keyboard.press(KEY_LEFT_SHIFT);
-      Keyboard.press(KEY_ESC); delay(150);
+        if (stop != 1) {
+            if (tempcycle <= cycle) {
+                Keyboard.press(KEY_LEFT_ALT);
+                Keyboard.press(KEY_LEFT_CTRL);
+                delay(100);
+                Keyboard.press('1');
+                delay(100);
+                Keyboard.releaseAll();
+                delay(duration);
+                Keyboard.press(KEY_LEFT_ALT);
+                Keyboard.press(KEY_LEFT_CTRL);
+                delay(100);
+                Keyboard.press('1');
+                delay(100);
+                Keyboard.releaseAll();
+                tempcycle++;
+            }
+        }
       break;
         
       case '2':  //Closes active window 
@@ -162,8 +181,8 @@ checkModeButton();
       break;
         
       case '9':  //paste
-      Keyboard.press(KEY_LEFT_CTRL); 
-      Keyboard.press('v'); delay(100); 
+      duration = 100;
+      cycle = 1; 
       Keyboard.release(KEY_LEFT_GUI); 
       Keyboard.release('v'); 
       delay(150);
@@ -171,77 +190,6 @@ checkModeButton();
       }
     delay(100); Keyboard.releaseAll();        // this releases the buttons
     }
-    break;
-    
-    case 1:
-    
-    encoderA_Mode1();                         //custom function for encoder A
-    encoderB_Mode1();                         //custom function for encoder A
-    lcd_mode_1();
-    //Serial.println("mode 1");
-    
-    
-    if (key) {  //SolidWorks Shortcuts
-      switch (key) {
-      case '1': //macro example: Windows_Key+R = Run then type "calc" and press enter. Opens MS Calculator
-      Keyboard.press(KEY_LEFT_GUI); 
-      Keyboard.press('r'); delay(150); 
-      Keyboard.release(KEY_LEFT_GUI); 
-      Keyboard.release('r'); 
-      delay(150);                 //give your system time to catch up with these android-speed keyboard presses
-      Keyboard.println("calc");
-      break; 
-      
-      case '2': //macro example: Opens measuring tool in Solidworks (keyboars shortcut set to Ctrl+Q in Solidworks)
-      Keyboard.press(KEY_LEFT_CTRL); 
-      Keyboard.press('c'); delay(100); 
-      Keyboard.release(KEY_LEFT_GUI); 
-      Keyboard.release('c'); 
-      delay(150); 
-      break;
-      
-      case '3': //macro example: Opens Document Properties in Solidworks (keyboars shortcut set to "Ctrl + F13" in Solidworks)
-      Keyboard.press(KEY_LEFT_CTRL);
-      Keyboard.press(KEY_F13); delay(150);  //snaps window to right side of screen.
-      break;
-    
-      case '4':  //Screen Snip (Win10 snipping tool)
-      Keyboard.press(KEY_LEFT_GUI); 
-      Keyboard.press(KEY_LEFT_SHIFT); 
-      Keyboard.press('s'); delay(100);     
-      break;
-      
-      case '5': //hold left shift key
-      Keyboard.press(KEY_LEFT_SHIFT);
-      delay(500);
-      break;
-      
-      case '6': //macro example: Opens shortcut tool bar in Solidworks (keyboars shortcut set to "s" in Solidworks)
-      Keyboard.press('s'); 
-      delay(50);
-      Keyboard.release('s'); 
-      break;
-      
-      case '7': //hold left control key
-      Keyboard.press(KEY_LEFT_CTRL); 
-      delay(500);
-      break;
-      
-      case '8': //macro example: Switches window in Solidworks (keyboars shortcut set to "CTRL + TAB" in Solidworks) 
-      Keyboard.press(KEY_LEFT_CTRL); 
-      Keyboard.press(KEY_TAB); delay(50);
-      Keyboard.release(KEY_TAB);
-      break; 
-      
-      case '9': //macro example: Exit current command in Solidworks (keyboars shortcut set to "d" in Solidworks)
-      Keyboard.press('d'); 
-      delay(50);
-      Keyboard.release('d');
-      break;  
-      
-    }
-    delay(100); Keyboard.releaseAll(); // this releases the buttons 
-  }
   break;
   }
   delay(1);
@@ -253,6 +201,7 @@ void checkModeButton(){
     if (buttonState == LOW) { // if the state has changed, increment the counter
       // if the current state is LOW then the button cycled:
       modePushCounter++;
+      stop = 1;
       Serial.println("pressed");
       Serial.print("number of button pushes: ");
       Serial.println(modePushCounter);
@@ -263,61 +212,51 @@ void checkModeButton(){
     delay(50); // Delay a little bit to avoid bouncing
   }
   lastButtonState = buttonState;  // save the current state as the last state, for next time through the loop
-   if (modePushCounter >1){       //reset the counter after 4 presses CHANGE THIS FOR MORE MODES
+   if (modePushCounter >0){       //reset the counter after 4 presses CHANGE THIS FOR MORE MODES
       modePushCounter = 0;}
 }
  
 
-void encoderA_Mode0(){ //testing some encoder wheel pay control for arcade games; centede, tempest...
-long newPos = RotaryEncoderA.read(); 
-  if (newPos != positionEncoderA && newPos > positionEncoderA) {
-    positionEncoderA = newPos;
-    Mouse.move(0,0,-1); //Mouse Scroll Mouse.move(x, y, wheel) range is -128 to +127
-                                                               }
 
-  if (newPos != positionEncoderA && newPos < positionEncoderA) { 
-    positionEncoderA = newPos;
-    Mouse.move(0,0,1); //Mouse Scroll Mouse.move(x, y, wheel) range is -128 to +127            
-                          }
-}
 
-void encoderB_Mode0(){
-  long newPos = RotaryEncoderB.read(); //When the encoder lands on a valley, this is an increment of 2.
-  if (newPos != positionEncoderB && newPos < positionEncoderB) {
-    positionEncoderB = newPos;
-    Mouse.move(4,0,0);                                                           }
-
-  if (newPos != positionEncoderB && newPos > positionEncoderB) {
-    positionEncoderB = newPos;
-    Mouse.move(-4,0,0);            
-                                                              }
-}
-
-void encoderA_Mode1(){
+void encoderA_Mode0(){
   long newPos = RotaryEncoderA.read(); 
   if (newPos != positionEncoderA && newPos > positionEncoderA) {
     positionEncoderA = newPos;
-    Mouse.move(0,0,-1); //Mouse Scroll Mouse.move(x, y, wheel) range is -128 to +127
-                                                               }
+    duration = duration + 100;
+    Serial.println("Delay:");
+    Serial.println(duration);
+    }
 
   if (newPos != positionEncoderA && newPos < positionEncoderA) { 
     positionEncoderA = newPos;
-    Mouse.move(0,0,1); //Mouse Scroll Mouse.move(x, y, wheel) range is -128 to +127            
-                          }
+    duration = duration - 100;
+    if (duration <= 0) {
+        duration == 100;
+    }
+    Serial.println("Delay:");
+    Serial.println(duration);
+    }
 }
 
-void encoderB_Mode1(){
+void encoderB_Mode0(){
   long newPos = RotaryEncoderB.read();
   if (newPos != positionEncoderB && newPos > positionEncoderB) {
     positionEncoderB = newPos;
-    Keyboard.write(KEY_RIGHT_ARROW);
-                                                               }
+    cycle = cycle + 1;
+    Serial.println("Cycle:");
+    Serial.println(cycle);
+   }
 
   if (newPos != positionEncoderB && newPos < positionEncoderB) {
     positionEncoderB = newPos;
-    Keyboard.write(KEY_LEFT_ARROW);
-                       
-                                                              }
+    cycle = cycle - 1;
+    if (cycle <= 0) {
+        cycle == 1;
+    }
+    Serial.println("Cycle:");
+    Serial.println(cycle);
+   }
 }
 
 void lcd_welcome(){
@@ -346,41 +285,12 @@ void lcd_mode_0(){
   currentmodeState++;
   }
 }
-
-void lcd_mode_1() {
-  if (currentmodeState == 0){
-  display.clearDisplay(); 
-  display.fillRect(0, 0, 128, 17, WHITE);
-  display.setTextSize(2); display.setCursor(5,1);
-  display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
-  display.println(F("SolidWorks"));
-
-  Text("CALC", 5, 25, 1, false); Text("MSURE", 48, 25, 1, false); Text("PROP", 96, 25, 1, false);
-  Text("SNIP", 5, 38, 1, false); Text("SHIFT", 48, 38, 1, false); Text("S BAR", 96, 38, 1, false);
-  Text("CTRL", 5, 51, 1, false); Text("S WIN", 48, 51, 1, false); Text("EXIT", 96, 51, 1, true);
-  display.display();
-  Serial.println("display updtae");
-  currentmodeState++;
-  }
-}
-
-
-void lcd_mode_2() {
-  display.clearDisplay(); 
-  display.fillRect(0, 0, 128, 17, WHITE);
-  display.setTextSize(2); display.setCursor(5,1);
-  display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
-  display.println(F("Photoshop"));
-
-  Text("CALC", 5, 25, 1, false); Text("MSURE", 48, 25, 1, false); Text("PROP", 96, 25, 1, false);
-  Text("SNIP", 5, 38, 1, false); Text("SHIFT", 48, 38, 1, false); Text("S BAR", 96, 38, 1, false);
-  Text("CTRL", 5, 51, 1, false); Text("S WIN", 48, 51, 1, false); Text("EXIT", 96, 51, 1, true);
-  display.display();
-}
 void Text(String text, int x, int y, int size, boolean d) {
 
-  display.setTextSize(size);
-  display.setTextColor(WHITE);
-  display.setCursor(x,y);
-  display.println(text);
+    display.setTextSize(size);
+    display.setTextColor(WHITE);
+    display.setCursor(x, y);
+    display.println(text);
 }
+
+

@@ -68,6 +68,7 @@ int modePushCounter = 0;       // counter for the number of button presses
 int buttonState = 0;           // current state of the button
 int lastButtonState = 0;       // previous state of the button
 int stop = 0;
+int lcdupdate = 0;
 
 long positionEncoderA  = -999; //encoderA LEFT position variable
 long positionEncoderB  = -999; //encoderB RIGHT position variable
@@ -97,7 +98,7 @@ void setup()   {
 void loop() {
 char key = keypad.getKey();
 checkModeButton();
-stop = 0;
+
 
   switch (modePushCounter) {
     case 0:
@@ -109,89 +110,363 @@ stop = 0;
     
     if (key) {  //Basic windows shortcuts
       switch (key) {
-      case '1': // Open Task Manager
-        if (stop != 1) {
-            if (tempcycle <= cycle) {
-                Keyboard.press(KEY_LEFT_ALT);
-                Keyboard.press(KEY_LEFT_CTRL);
-                delay(100);
-                Keyboard.press('1');
-                delay(100);
-                Keyboard.releaseAll();
-                delay(duration);
-                Keyboard.press(KEY_LEFT_ALT);
-                Keyboard.press(KEY_LEFT_CTRL);
-                delay(100);
-                Keyboard.press('1');
-                delay(100);
-                Keyboard.releaseAll();
-                tempcycle++;
+      case '1': 
+         while (tempcycle <= cycle) {
+             stop = digitalRead(ModeButton);
+             if (stop == 0) {
+                 break;
+             }
+             display.clearDisplay();
+             display.fillRect(0, 0, 128, 17, WHITE);
+             display.setTextSize(2); display.setCursor(10, 1);
+             display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
+             display.println(F("Switching"));
+             Text("Cycles remaining: ", 2, 30, 1.5, false); display.print(cycle - tempcycle);
+             display.display();
+             Keyboard.press(KEY_LEFT_ALT);
+             Keyboard.press(KEY_LEFT_CTRL);
+             delay(100);
+             Keyboard.press('1');
+               delay(100);
+               Keyboard.releaseAll();
+              Serial.print("cycle:"); Serial.print(tempcycle);
+              Serial.println("pressed alt+ctrl+1");
+              Serial.print("now delay:"); Serial.print(duration);
+              delay(duration);
+              Keyboard.press(KEY_LEFT_ALT);
+              Keyboard.press(KEY_LEFT_CTRL);
+              delay(100);
+              Keyboard.press('2');
+              delay(100);               
+              Keyboard.releaseAll();
+              Serial.println("pressed alt+ctrl+2");
+              delay(duration);
+              tempcycle++;
             }
-        }
+
+         lcdupdate++;
+         lcd_mode_0();
+       
       break;
         
-      case '2':  //Closes active window 
-      Keyboard.press(KEY_LEFT_ALT);
-      Keyboard.press(KEY_F4); delay(150);  
-      break;
+      case '2':  
+          while (tempcycle <= cycle) {
+              stop = digitalRead(ModeButton);
+              if (stop == 0) {
+                  break;
+              }
+              display.clearDisplay();
+              display.fillRect(0, 0, 128, 17, WHITE);
+              display.setTextSize(2); display.setCursor(10, 1);
+              display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
+              display.println(F("Switching"));
+              Text("Cycles remaining: ", 2, 30, 1.5, false); display.print(cycle - tempcycle);
+              display.display();
+              Keyboard.press(KEY_LEFT_ALT);
+              Keyboard.press(KEY_LEFT_CTRL);
+              delay(100);
+              Keyboard.press('1');
+              delay(100);
+              Keyboard.releaseAll();
+              Serial.print("cycle:"); Serial.print(tempcycle);
+              Serial.println("pressed alt+ctrl+1");
+              Serial.print("now delay:"); Serial.print(duration);
+              delay(duration);
+              Keyboard.press(KEY_LEFT_ALT);
+              Keyboard.press(KEY_LEFT_CTRL);
+              delay(100);
+              Keyboard.press('2');
+              delay(100);
+              Keyboard.releaseAll();
+              Serial.println("pressed alt+ctrl+2");
+              delay(duration);
+              tempcycle++;
+          }
+
+          lcdupdate++;
+          lcd_mode_0();
+
+          break;
         
-      case '3': // Open Device Manager
-      Keyboard.press(KEY_LEFT_GUI); 
-      Keyboard.press('r'); delay(100); 
-      Keyboard.release(KEY_LEFT_GUI); 
-      Keyboard.release('r'); 
-      delay(150); //give your system time to catch up with these android-speed keyboard presses
-      Keyboard.println("devmgmt.msc");
-      break;
+      case '3': 
+          while (tempcycle <= cycle) {
+              stop = digitalRead(ModeButton);
+              if (stop == 0) {
+                  break;
+              }
+              display.clearDisplay();
+              display.fillRect(0, 0, 128, 17, WHITE);
+              display.setTextSize(2); display.setCursor(10, 1);
+              display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
+              display.println(F("Switching"));
+              Text("Cycles remaining: ", 2, 30, 1.5, false); display.print(cycle - tempcycle);
+              display.display();
+              Keyboard.press(KEY_LEFT_ALT);
+              Keyboard.press(KEY_LEFT_CTRL);
+              delay(100);
+              Keyboard.press('1');
+              delay(100);
+              Keyboard.releaseAll();
+              Serial.print("cycle:"); Serial.print(tempcycle);
+              Serial.println("pressed alt+ctrl+1");
+              Serial.print("now delay:"); Serial.print(duration);
+              delay(duration);
+              Keyboard.press(KEY_LEFT_ALT);
+              Keyboard.press(KEY_LEFT_CTRL);
+              delay(100);
+              Keyboard.press('2');
+              delay(100);
+              Keyboard.releaseAll();
+              Serial.println("pressed alt+ctrl+2");
+              delay(duration);
+              tempcycle++;
+          }
+
+          lcdupdate++;
+          lcd_mode_0();
+
+          break;
         
-      case '4':  //Windows Explorer
-      Keyboard.press(KEY_LEFT_GUI);
-      Keyboard.press('e'); delay(100); 
-      break;
+      case '4':  
+          while (tempcycle <= cycle) {
+              stop = digitalRead(ModeButton);
+              if (stop == 0) {
+                  break;
+              }
+              display.clearDisplay();
+              display.fillRect(0, 0, 128, 17, WHITE);
+              display.setTextSize(2); display.setCursor(10, 1);
+              display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
+              display.println(F("Switching"));
+              Text("Cycles remaining: ", 2, 30, 1.5, false); display.print(cycle - tempcycle);
+              display.display();
+              Keyboard.press(KEY_LEFT_ALT);
+              Keyboard.press(KEY_LEFT_CTRL);
+              delay(100);
+              Keyboard.press('1');
+              delay(100);
+              Keyboard.releaseAll();
+              Serial.print("cycle:"); Serial.print(tempcycle);
+              Serial.println("pressed alt+ctrl+1");
+              Serial.print("now delay:"); Serial.print(duration);
+              delay(duration);
+              Keyboard.press(KEY_LEFT_ALT);
+              Keyboard.press(KEY_LEFT_CTRL);
+              delay(100);
+              Keyboard.press('2');
+              delay(100);
+              Keyboard.releaseAll();
+              Serial.println("pressed alt+ctrl+2");
+              delay(duration);
+              tempcycle++;
+          }
+
+          lcdupdate++;
+          lcd_mode_0();
+
+          break;
         
-      case '5':  //Screen Snip (Win10 snipping tool)
-      Keyboard.press(KEY_LEFT_GUI); 
-      Keyboard.press(KEY_LEFT_SHIFT); 
-      Keyboard.press('s'); delay(100);     
-      break;
+      case '5':  
+          while (tempcycle <= cycle) {
+              stop = digitalRead(ModeButton);
+              if (stop == 0) {
+                  break;
+              }
+              display.clearDisplay();
+              display.fillRect(0, 0, 128, 17, WHITE);
+              display.setTextSize(2); display.setCursor(10, 1);
+              display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
+              display.println(F("Switching"));
+              Text("Cycles remaining: ", 2, 30, 1.5, false); display.print(cycle - tempcycle);
+              display.display();
+              Keyboard.press(KEY_LEFT_ALT);
+              Keyboard.press(KEY_LEFT_CTRL);
+              delay(100);
+              Keyboard.press('1');
+              delay(100);
+              Keyboard.releaseAll();
+              Serial.print("cycle:"); Serial.print(tempcycle);
+              Serial.println("pressed alt+ctrl+1");
+              Serial.print("now delay:"); Serial.print(duration);
+              delay(duration);
+              Keyboard.press(KEY_LEFT_ALT);
+              Keyboard.press(KEY_LEFT_CTRL);
+              delay(100);
+              Keyboard.press('2');
+              delay(100);
+              Keyboard.releaseAll();
+              Serial.println("pressed alt+ctrl+2");
+              delay(duration);
+              tempcycle++;
+          }
+
+          lcdupdate++;
+          lcd_mode_0();
+
+          break;
       
       case '6':  //Opens google chrome
-      Keyboard.press(KEY_LEFT_GUI); 
-      Keyboard.press('r'); 
-      Keyboard.release(KEY_LEFT_GUI); 
-      Keyboard.release('r');
-      delay(50); 
-      Keyboard.println("chrome"); 
-      break;
+          while (tempcycle <= cycle) {
+              stop = digitalRead(ModeButton);
+              if (stop == 0) {
+                  break;
+              }
+              display.clearDisplay();
+              display.fillRect(0, 0, 128, 17, WHITE);
+              display.setTextSize(2); display.setCursor(10, 1);
+              display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
+              display.println(F("Switching"));
+              Text("Cycles remaining: ", 2, 30, 1.5, false); display.print(cycle - tempcycle);
+              display.display();
+              Keyboard.press(KEY_LEFT_ALT);
+              Keyboard.press(KEY_LEFT_CTRL);
+              delay(100);
+              Keyboard.press('1');
+              delay(100);
+              Keyboard.releaseAll();
+              Serial.print("cycle:"); Serial.print(tempcycle);
+              Serial.println("pressed alt+ctrl+1");
+              Serial.print("now delay:"); Serial.print(duration);
+              delay(duration);
+              Keyboard.press(KEY_LEFT_ALT);
+              Keyboard.press(KEY_LEFT_CTRL);
+              delay(100);
+              Keyboard.press('2');
+              delay(100);
+              Keyboard.releaseAll();
+              Serial.println("pressed alt+ctrl+2");
+              delay(duration);
+              tempcycle++;
+          }
+
+          lcdupdate++;
+          lcd_mode_0();
+
+          break;
         
       case '7':  //copy
-      Keyboard.press(KEY_LEFT_CTRL); 
-      Keyboard.press('c'); delay(100); 
-      Keyboard.release(KEY_LEFT_GUI); 
-      Keyboard.release('c'); 
-      delay(150); 
-      break;
+          while (tempcycle <= cycle) {
+              stop = digitalRead(ModeButton);
+              if (stop == 0) {
+                  break;
+              }
+              display.clearDisplay();
+              display.fillRect(0, 0, 128, 17, WHITE);
+              display.setTextSize(2); display.setCursor(10, 1);
+              display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
+              display.println(F("Switching"));
+              Text("Cycles remaining: ", 2, 30, 1.5, false); display.print(cycle - tempcycle);
+              display.display();
+              Keyboard.press(KEY_LEFT_ALT);
+              Keyboard.press(KEY_LEFT_CTRL);
+              delay(100);
+              Keyboard.press('1');
+              delay(100);
+              Keyboard.releaseAll();
+              Serial.print("cycle:"); Serial.print(tempcycle);
+              Serial.println("pressed alt+ctrl+1");
+              Serial.print("now delay:"); Serial.print(duration);
+              delay(duration);
+              Keyboard.press(KEY_LEFT_ALT);
+              Keyboard.press(KEY_LEFT_CTRL);
+              delay(100);
+              Keyboard.press('2');
+              delay(100);
+              Keyboard.releaseAll();
+              Serial.println("pressed alt+ctrl+2");
+              delay(duration);
+              tempcycle++;
+          }
+
+          lcdupdate++;
+          lcd_mode_0();
+
+          break;
         
       case '8':  // clipboard
-      Keyboard.press(KEY_LEFT_GUI); 
-      Keyboard.press('v'); delay(100); 
-      Keyboard.release(KEY_LEFT_GUI); 
-      Keyboard.release('v'); 
-      delay(150);
-      break;
+          while (tempcycle <= cycle) {
+              stop = digitalRead(ModeButton);
+              if (stop == 0) {
+                  break;
+              }
+              display.clearDisplay();
+              display.fillRect(0, 0, 128, 17, WHITE);
+              display.setTextSize(2); display.setCursor(10, 1);
+              display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
+              display.println(F("Switching"));
+              Text("Cycles remaining: ", 2, 30, 1.5, false); display.print(cycle - tempcycle);
+              display.display();
+              Keyboard.press(KEY_LEFT_ALT);
+              Keyboard.press(KEY_LEFT_CTRL);
+              delay(100);
+              Keyboard.press('1');
+              delay(100);
+              Keyboard.releaseAll();
+              Serial.print("cycle:"); Serial.print(tempcycle);
+              Serial.println("pressed alt+ctrl+1");
+              Serial.print("now delay:"); Serial.print(duration);
+              delay(duration);
+              Keyboard.press(KEY_LEFT_ALT);
+              Keyboard.press(KEY_LEFT_CTRL);
+              delay(100);
+              Keyboard.press('2');
+              delay(100);
+              Keyboard.releaseAll();
+              Serial.println("pressed alt+ctrl+2");
+              delay(duration);
+              tempcycle++;
+          }
+
+          lcdupdate++;
+          lcd_mode_0();
+
+          break;
         
       case '9':  //paste
-      duration = 100;
-      cycle = 1; 
-      Keyboard.release(KEY_LEFT_GUI); 
-      Keyboard.release('v'); 
-      delay(150);
-      break;      
+          while (tempcycle <= cycle) {
+              stop = digitalRead(ModeButton);
+              if (stop == 0) {
+                  break;
+              }
+              display.clearDisplay();
+              display.fillRect(0, 0, 128, 17, WHITE);
+              display.setTextSize(2); display.setCursor(10, 1);
+              display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
+              display.println(F("Switching"));
+              Text("Cycles remaining: ", 2, 30, 1.5, false); display.print(cycle - tempcycle);
+              display.display();
+              Keyboard.press(KEY_LEFT_ALT);
+              Keyboard.press(KEY_LEFT_CTRL);
+              delay(100);
+              Keyboard.press('1');
+              delay(100);
+              Keyboard.releaseAll();
+              Serial.print("cycle:"); Serial.print(tempcycle);
+              Serial.println("pressed alt+ctrl+1");
+              Serial.print("now delay:"); Serial.print(duration);
+              delay(duration);
+              Keyboard.press(KEY_LEFT_ALT);
+              Keyboard.press(KEY_LEFT_CTRL);
+              delay(100);
+              Keyboard.press('2');
+              delay(100);
+              Keyboard.releaseAll();
+              Serial.println("pressed alt+ctrl+2");
+              delay(duration);
+              tempcycle++;
+          }
+
+          lcdupdate++;
+          lcd_mode_0();
+
+          break;
       }
-    delay(100); Keyboard.releaseAll();        // this releases the buttons
+    delay(10); Keyboard.releaseAll();        // this releases the buttons
     }
   break;
   }
+
+  tempcycle = 1;
   delay(1);
 }
 
@@ -202,28 +477,35 @@ void checkModeButton(){
       // if the current state is LOW then the button cycled:
       modePushCounter++;
       stop = 1;
+      tempcycle = 1;
       Serial.println("pressed");
       Serial.print("number of button pushes: ");
       Serial.println(modePushCounter);
+      Serial.print("Stop:");
+      Serial.print(stop);
+      
       currentmodeState = 0;
       colorUpdate = 0;      // set the color change flag ONLY when we know the mode button has been pressed. 
                             // Saves processor resources from updating the neoPixel colors all the time
     } 
-    delay(50); // Delay a little bit to avoid bouncing
+    delay(1); // Delay a little bit to avoid bouncing
   }
   lastButtonState = buttonState;  // save the current state as the last state, for next time through the loop
    if (modePushCounter >0){       //reset the counter after 4 presses CHANGE THIS FOR MORE MODES
-      modePushCounter = 0;}
+      modePushCounter = 0;
+      stop = 0;
+   }
 }
  
 
 
 
 void encoderA_Mode0(){
-  long newPos = RotaryEncoderA.read(); 
+  long newPos = RotaryEncoderA.read()/4; 
   if (newPos != positionEncoderA && newPos > positionEncoderA) {
     positionEncoderA = newPos;
     duration = duration + 100;
+    lcdupdate++;
     Serial.println("Delay:");
     Serial.println(duration);
     }
@@ -232,18 +514,20 @@ void encoderA_Mode0(){
     positionEncoderA = newPos;
     duration = duration - 100;
     if (duration <= 0) {
-        duration == 100;
+        duration = 100;
     }
+    lcdupdate++;
     Serial.println("Delay:");
     Serial.println(duration);
     }
 }
 
 void encoderB_Mode0(){
-  long newPos = RotaryEncoderB.read();
+  long newPos = RotaryEncoderB.read()/4;
   if (newPos != positionEncoderB && newPos > positionEncoderB) {
     positionEncoderB = newPos;
     cycle = cycle + 1;
+    lcdupdate++;
     Serial.println("Cycle:");
     Serial.println(cycle);
    }
@@ -252,8 +536,9 @@ void encoderB_Mode0(){
     positionEncoderB = newPos;
     cycle = cycle - 1;
     if (cycle <= 0) {
-        cycle == 1;
+        cycle = 1;
     }
+    lcdupdate++;
     Serial.println("Cycle:");
     Serial.println(cycle);
    }
@@ -270,27 +555,28 @@ void lcd_welcome(){
 }
 
 void lcd_mode_0(){  
-  if (currentmodeState == 0){
+  if (lcdupdate != 0){
   display.clearDisplay(); 
   display.fillRect(0, 0, 128, 17, WHITE);
   display.setTextSize(2); display.setCursor(22,1);
   display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
-  display.println(F("Windows"));
+  display.println(F("USB HID"));
 
-  Text("TskMgr", 5, 25, 1, false); Text("CLOSE", 48, 25, 1, false); Text("DevMgr", 90, 25, 1, false);
-  Text("Explr", 5, 38, 1, false); Text("SNIP", 48, 38, 1, false); Text("CHROME", 90, 38, 1, false);
-  Text("COPY", 5, 51, 1, false); Text("ClpBrd", 48, 51, 1, false); Text("PASTE", 90, 51, 1, true);
+  Text("Delay: ", 2, 22, 1.5, false); display.print(duration); display.print(" mil sec");
+  Text("Cycles: ", 2, 35, 1.5, false); display.print(cycle);
+
   display.display();
-  Serial.println("display updtae");
-  currentmodeState++;
+  lcdupdate = 0;
   }
 }
+
+
 void Text(String text, int x, int y, int size, boolean d) {
 
     display.setTextSize(size);
     display.setTextColor(WHITE);
     display.setCursor(x, y);
-    display.println(text);
+    display.print(text);
 }
 
 
